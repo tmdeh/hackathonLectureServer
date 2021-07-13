@@ -5,7 +5,6 @@ const secret = require('../secret/primary');
 const db = require("../model/db");
 const crypto = require('crypto');
 const upload = require('../middleware/fileload');
-const token = require('../middleware/token');
 
 /* GET home page. */
 router.post('/signUp', upload.single('profile'), function(req, res, next) {

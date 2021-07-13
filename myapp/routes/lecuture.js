@@ -53,7 +53,7 @@ router.get('/', function(req, res, next) { //모집중 0 진행중 1 종료됨 2
 });
 
 router.post('/', function(req, res, next) {
-
+    
 });
 
 router.get('/:lectureId', function(req, res, next) {

@@ -71,7 +71,7 @@ router.post('/login', function(req, res, next) {
   let post = req.body;
   const pw = crypto.createHash('sha512').update(post.password).digest('base64'); //암호화된 리퀘스트 패스워드
   db.query(`select password from User where user_id=?`, [post.userId], (err, result) => {
-    if (result === undefined || result == "") {
+    if (Object.keys(result).length == 0) {
       res.status(401).json({
         data : null,
         message : "사용자를 찾을 수 없습니다."

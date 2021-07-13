@@ -154,8 +154,52 @@ router.get('/:lectureId', function(req, res, next) {
     })
 });
 
-router.get('/:userId', function(req, res, next) {
-
+router.get('/user/:userId', function(req, res, next) {
+    let now = new Date();
+    let userId = req.params.userId;
+    db.query('SELECT * FROM Lecture WHERE user_id = ?', [userId], (err, result) => {
+        if(result == undefined || err || Object.keys(result).length == 0){
+            res.status(404).json({
+                data : null,
+                message : "게시물이 존재하지 않습니다."
+            })
+        }
+        else{
+            let resData = [];
+            for(let i = 0; i < result.length; i++){
+                let url = result[i].attachment_url.split(',');
+                let field = JSON.parse(result[i].field);
+                let state  =  -1;
+                if(now < result[i].proposal){//모집 중
+                    state = 0;
+                }
+                if (now >= result[i].start_date){//모집 종료 진행중
+                    state = 1;
+                }
+                if(now > result[i].end_date){//종료됨
+                    state = 2;
+                }
+                let data = {
+                    lecture_id : result[0].lecture_id,
+                    title : result[0].title,
+                    content : result[0].content,
+                    attachmentUrl : url,
+                    userId : result[0].user_id,
+                    field : field,
+                    startDate : result[0].start_date,
+                    endDate : result[0].end_date,
+                    uploadDate : result[0].upload_date,
+                    proposal : result[0].proposal,
+                    state : state,
+                }
+                resData.push(data);
+            }
+            res.status(200).json({
+                data : resData,
+                message : "게시물 가져오기를 성공하였습니다."
+            })
+        }
+    })
 });
 
 router.post('/search', function(req, res, next) {

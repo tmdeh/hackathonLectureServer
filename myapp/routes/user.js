@@ -9,8 +9,11 @@ const upload = require('../middleware/fileload');
 /* GET home page. */
 router.post('/signUp', upload.single('profile'), function(req, res, next) {
   const dbQuery = () => {
+    let profile = null;
     post = req.body;
-    let profile = req.file.filename;
+    if(req.file != undefined){
+      profile = req.file.filename;
+    }
     var pw = crypto.createHash('sha512').update(post.password).digest('base64');
     const promise = new Promise((resolve, reject) => {
       db.query(`INSERT INTO user (user_id, password, name, grade, class, number, field, attachment_url, introduce) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`,

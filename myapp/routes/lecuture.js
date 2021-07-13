@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) { //모집중 0 진행중 1 종료됨 2
         }
         else {
             for(let i = 0; result[i] !== undefined; i++){
-                let field = JSON.parse(result[0].field);
+                let field = JSON.parse(result[i].field);
                 let state  =  -1;
                 let startDate = new Date(result[i].start_date).getTime();
                 let endDate = new Date(result[i].end_date,).getTime();
@@ -75,20 +75,22 @@ router.post('/', upload.array('attachment', 4), function(req, res, next) {
   }
   const insetQuery = (data) => {
       let post = req.body;
-      let files = req.files;
-      let filesString = "";
-      for(var i=0;i<files.length;i++){
-        filesString += files[i].path;
-        if(i!=files.length-1){
-            filesString+=",";
-        }
+      let filesString = null;
+      if(req.files != undefined){
+          let files = req.files;
+          filesString = "";
+          for(var i=0;i<files.length;i++){
+            filesString += files[i].path;
+            if(i!=files.length-1){
+                filesString+=",";
+            }
+          }
       }
       const promise = new Promise((resolve, reject) => {
         let now = new Date();
         now = now.getTime();
         db.query('INSERT INTO Lecture(title, content, attachment_url, user_id, field, start_date, end_date, upload_date, proposal) Values(?, ?, ?, ?, ?, ?, ?, ?, ?)', 
             [post.title, post.content, filesString,  data.userId, post.field, post.start_date, post.end_date,now, post.proposal], (err, result) => {
-                console.log(err);
                 if(err){
                     reject(err);
                 }

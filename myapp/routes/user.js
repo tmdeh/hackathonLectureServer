@@ -54,7 +54,9 @@ router.post('/signUp', upload.single('profile'), function(req, res, next) {
 
   const response = (token) => {
     res.status(200).json({
-      data : token,
+      data : {
+        token : token
+      },
       message : "회원가입에 성공하였습니다.",
     })
   }
@@ -66,11 +68,11 @@ router.post('/signUp', upload.single('profile'), function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  
   let post = req.body;
+  console.log(req.body);
   const pw = crypto.createHash('sha512').update(post.password).digest('base64'); //암호화된 리퀘스트 패스워드
   db.query(`select password from User where user_id=?`, [post.userId], (err, result) => {
-    if (Object.keys(result).length == 0) {
+    if (!Object.keys(result)) {
       res.status(401).json({
         data : null,
         message : "사용자를 찾을 수 없습니다."
@@ -86,7 +88,9 @@ router.post('/login', function(req, res, next) {
         expiresIn: "24H"
       })
       res.status(200).json({
-        data : token,
+        data : {
+          token : token
+        },
         message : "로그인에 성공하였습니다.",
       });
     }
@@ -127,7 +131,9 @@ router.post('/autoLogin', function(req, res, next) {
     console.log(result);
     if (result) {
       res.status(200).json({
-        data : token,
+        data : {
+          token : token
+        },
       });
     } else {
       res.sendStatus(403);
@@ -204,7 +210,10 @@ router.get('/', function(req, res, next) {
 
   const response = (data) => {
     if(data){
-      res.status(200).json(data)
+      res.status(200).json({
+        data : data,
+        message : "데이터를 정상적으로 가져왔습니다."
+      })
     }
     else {
       res.sendStatus(404);

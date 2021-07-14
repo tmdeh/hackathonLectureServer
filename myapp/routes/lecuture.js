@@ -52,7 +52,6 @@ router.get('/', function(req, res, next) { //모집중 0 진행중 1 종료됨 2
                 }
                 resData.push(data);
             }
-            console.log(resData)
              res.status(200).json({
                 data : resData,
                 message : "게시물 가져오기를 성공하였습니다.",
@@ -109,7 +108,6 @@ router.post('/', upload.array('attachment', 4), function(req, res, next) {
     }
 
     const err = (error) => {
-        console.log(error);
         res.status(400).json({
             data : null, 
             message : "게시물 등록에 실패하였습니다.",
@@ -219,7 +217,6 @@ router.post('/search', function(req, res, next) {
     let now = new Date();
     now = now.getTime();
     let search = '%' + req.body.title + '%';
-    console.log(search);
     db.query("SELECT * FROM Lecture WHERE title LIKE ?", [search], (err, result) => {
         if(result == undefined || err || Object.keys(result).length == 0){
             res.status(404).json({

@@ -39,7 +39,6 @@ router.post('/signUp', upload.single('profile'), function(req, res, next) {
   }
 
   const err = (error) => {
-    console.log(error);
     if(error.code == 'ER_BAD_NULL_ERROR')
     {
       res.status(401).json({
@@ -72,7 +71,6 @@ router.post('/signUp', upload.single('profile'), function(req, res, next) {
 
 router.post('/login', function(req, res, next) {
   let post = req.body;
-  console.log(req.body);
   const pw = crypto.createHash('sha512').update(post.password).digest('base64'); //암호화된 리퀘스트 패스워드
   db.query(`select password from User where user_id=?`, [post.userId], (err, result) => {
     if (!Object.keys(result)) {
@@ -131,7 +129,6 @@ router.post('/autoLogin', function(req, res, next) {
     return promise
   };
   const respond = (result) => {
-    console.log(result);
     if (result) {
       res.status(200).json({
         data : {
@@ -199,7 +196,6 @@ router.get('/', function(req, res, next) {
   }
 
   const err = (error) => {
-    console.log(error);
     if(error.message == 'jwt expired'){
       res.status(401).json({
         data : null,
@@ -229,7 +225,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.put('/', upload.single('updateProfile'), function(req, res, next) {
-  //console.log(req.body);
   let token = req.get('authorization');
   const tokendecode = () => {
     const promise = new Promise((resolve, reject) => {
@@ -245,12 +240,10 @@ router.put('/', upload.single('updateProfile'), function(req, res, next) {
   const dbQuery = (data) => {
     const profile = crypto.createHash('sha512').update(req.file.filename).digest('base64');
     const pw = crypto.createHash('sha512').update(req.body.password).digest('base64');
-    console.log(data.userId);
     const promise = new Promise((resolve, reject) => {
       db.query("UPDATE User SET user_id = ?, password = ?,name = ?, grade = ?, class = ?, number = ?, field = ?, attachment_url = ?, introduce = ? WHERE user_id = ?", 
       [req.body.userId, pw, req.body.name, req.body.grade, req.body.klass, req.body.number, req.body.field, profile, req.body.introduce, data.userId],
       (err, result) => {
-        console.log(result);
         if(err) reject(err);
         else{      
           resolve(true);
@@ -280,7 +273,6 @@ router.put('/', upload.single('updateProfile'), function(req, res, next) {
       })
     }
     else{
-      console.log(error);
       res.status(400).json({
         data : null,
         message : "수정에 실패했습니다.",
